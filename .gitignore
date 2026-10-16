@@ -1,0 +1,29 @@
+# Environment & Secrets
+.env
+*.env.local
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# SQLite Database
+*.db
+*.sqlite3
+fest_events.db
+
+# Streamlit logs and cache
+.streamlit/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
