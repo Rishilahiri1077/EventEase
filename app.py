@@ -378,10 +378,11 @@ if st.session_state.pending_confirmation:
     col_c1, col_c2 = st.columns([1, 1])
     with col_c1:
         if st.button("✅ Confirm & Execute Action", type="primary", use_container_width=True):
-            res_msg, success = execute_pending_confirmation(
-                pending,
-                is_organiser=st.session_state.is_organiser_authenticated
-            )
+            with st.spinner("Executing transaction in fest database..."):
+                res_msg, success = execute_pending_confirmation(
+                    pending,
+                    is_organiser=st.session_state.is_organiser_authenticated
+                )
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": f"**Execution Result:**\n\n{res_msg}"
@@ -411,15 +412,19 @@ if chat_input_val:
     incoming_input = chat_input_val
 
 if incoming_input:
-    # Add user message to conversation history
+    # Add and immediately render user message
     st.session_state.messages.append({"role": "user", "content": incoming_input})
+    with st.chat_message("user", avatar="👤"):
+        st.markdown(incoming_input)
 
-    # Process through EventEase Agent
-    response_data = st.session_state.agent.process_message(
-        user_message=incoming_input,
-        session_context=st.session_state.session_context,
-        is_organiser=st.session_state.is_organiser_authenticated
-    )
+    # Process through EventEase Agent with real-time loading indicator
+    with st.chat_message("assistant", avatar="🎪"):
+        with st.spinner("EventEase is thinking and querying the fest database..."):
+            response_data = st.session_state.agent.process_message(
+                user_message=incoming_input,
+                session_context=st.session_state.session_context,
+                is_organiser=st.session_state.is_organiser_authenticated
+            )
 
     # Update state
     reply_text = response_data.get("reply", "")
